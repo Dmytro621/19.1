@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather Widget</title>
+  </head>
+  <body>
+    <div id="weather-widget">
+      <h2>Погода</h2>
+      <div id="weather-info">
+        <p id="temperature"></p>
+        <p id="description"></p>
+      </div>
+      <button id="refresh-button">Оновити</button>
+    </div>
+
+    <style>
+      #weather-widget {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background-color: rgb(228, 225, 225);
+        border-radius: 8px;
+        max-width: 300px;
+        margin: 0 auto;
+      }
+
+      #weather-info {
+        margin-bottom: 10px;
+      }
+
+      #refresh-button {
+        padding: 10px 20px;
+        background-color: rgb(79, 196, 83);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const apiKey = "d9c49004e032cc18e39caf15a57329f9";
+        const city = "Kyiv";
+
+        function getWeather() {
+          fetch(
+            `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=uk`
+          )
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Ошибка при получении данных");
+              }
+              return response.json();
+            })
+            .then((data) => {
+              const temperature = data.main.temp;
+              const description = data.weather[0].description;
+
+              document.getElementById(
+                "temperature"
+              ).textContent = `Температура: ${temperature}°C`;
+              document.getElementById(
+                "description"
+              ).textContent = `Опис: ${description}`;
+            })
+            .catch((error) => {
+              console.error("Ошибка при получении данных:", error);
+              document.getElementById("temperature").textContent =
+                "Помилка отримання погоди.";
+              document.getElementById("description").textContent =
+                error.message;
+            });
+        }
+
+        getWeather();
+
+        document
+          .getElementById("refresh-button")
+          .addEventListener("click", getWeather);
+      });
+    </script>
+  </body>
+</html>
